@@ -155,7 +155,7 @@ public class AuthServiceTest {
                 "12345678900",
                 "test@email.com",
                 "11999999999",
-                "password123",
+                "password@123",
                 "1234"
         );
     }
@@ -174,7 +174,7 @@ public class AuthServiceTest {
     }
 
     private LoginRequest buildLoginRequest() {
-        return new LoginRequest("test@email.com", "Senha@123");
+        return new LoginRequest("test@email.com", "Password@123");
     }
 
 }

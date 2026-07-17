@@ -92,7 +92,7 @@ public class UserServiceTest {
                 "12345678910",
                 "test@email.com",
                 "+53999999999",
-                "Senha@123",
+                "Password@123",
                 "1234");
     }
 
