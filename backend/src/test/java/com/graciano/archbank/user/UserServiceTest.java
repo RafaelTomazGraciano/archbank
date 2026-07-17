@@ -33,6 +33,7 @@ public class UserServiceTest {
         RegisterRequest request = buildRegisterRequest();
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
+        when(userRepository.existsByPhone(request.phone())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encrypted-password");
         when(passwordEncoder.encode(request.transactionPin())).thenReturn("encrypted-pin");
         when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -47,6 +48,7 @@ public class UserServiceTest {
 
         verify(userRepository).existsByEmail(request.email());
         verify(userRepository).existsByCpf(request.cpf());
+        verify(userRepository).existsByPhone(request.phone());
         verify(passwordEncoder).encode(request.password());
         verify(passwordEncoder).encode(request.transactionPin());
 
@@ -68,6 +70,7 @@ public class UserServiceTest {
 
         assertEquals("Email already in use", exception.getMessage());
         verify(userRepository, never()).existsByCpf(any());
+        verify(userRepository, never()).existsByPhone(any());
         verify(passwordEncoder, never()).encode(any());
         verify(userRepository, never()).save(any());
     }
@@ -82,8 +85,44 @@ public class UserServiceTest {
         BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.createUser(request));
 
         assertEquals("CPF already in use", exception.getMessage());
+        verify(userRepository, never()).existsByPhone(any());
         verify(passwordEncoder, never()).encode(any());
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should throw BadRequestException when phone is already in use")
+    void shouldThrowBadRequestExceptionWhenPhoneAlreadyExist() {
+        RegisterRequest request = buildRegisterRequest();
+        when(userRepository.existsByEmail(request.email())).thenReturn(false);
+        when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
+        when(userRepository.existsByPhone(request.phone())).thenReturn(true);
+
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> userService.createUser(request));
+
+        assertEquals("Phone already in use", exception.getMessage());
+        verify(userRepository).existsByEmail(request.email());
+        verify(userRepository).existsByCpf(request.cpf());
+        verify(userRepository, never()).save(any());
+        verify(passwordEncoder, never()).encode(any());
+    }
+
+    @Test
+    @DisplayName("Should create user successfully without checking phone uniqueness when phone is null")
+    void shouldCreateUserSuccessfullyWhenPhoneIsNull() {
+        RegisterRequest request = buildRegisterRequestWithoutPhone();
+        when(userRepository.existsByEmail(request.email())).thenReturn(false);
+        when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
+        when(passwordEncoder.encode(request.password())).thenReturn("encrypted-password");
+        when(passwordEncoder.encode(request.transactionPin())).thenReturn("encrypted-pin");
+        when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        User user = userService.createUser(request);
+
+        assertNull(user.getPhone());
+        verify(userRepository, never()).existsByPhone(any());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     private RegisterRequest buildRegisterRequest() {
@@ -92,6 +131,16 @@ public class UserServiceTest {
                 "12345678910",
                 "test@email.com",
                 "+53999999999",
+                "Password@123",
+                "1234");
+    }
+
+    private RegisterRequest buildRegisterRequestWithoutPhone() {
+        return new RegisterRequest(
+                "Test",
+                "12345678910",
+                "test@email.com",
+                null,
                 "Password@123",
                 "1234");
     }

@@ -22,6 +22,10 @@ public class UserService {
         if (userRepository.existsByCpf(request.cpf())) {
             throw new BadRequestException("CPF already in use");
         }
+        if (request.phone() != null && !request.phone().isBlank()
+                && userRepository.existsByPhone(request.phone())) {
+            throw new BadRequestException("Phone already in use");
+        }
 
         User user = User.builder()
                 .name(request.name())
