@@ -20,7 +20,7 @@ public record RegisterRequest(
         @NotBlank(message = "Password is required")
         @Size(min = 8, max = 20)
         @Pattern(
-                regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\",./<>?]).{8,}$",
+                regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\",./<>?]).{8,20}$",
                 message = "The password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long"
         )
                 @Schema(example = "MyP@ssw0rd123")
