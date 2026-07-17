@@ -10,6 +10,8 @@ A simple digital bank
 - Spring Boot
 - PostgreSQL
 
+For more information, read the [backend documentation](backend/BACKEND_README.md)
+
 ### Frontend
 
 - React
