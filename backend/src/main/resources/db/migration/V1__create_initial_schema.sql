@@ -45,6 +45,7 @@ CREATE TABLE "users" (
                          "email" varchar(255) UNIQUE NOT NULL,
                          "phone" varchar(20) UNIQUE,
                          "password" varchar(255) NOT NULL,
+                         "transaction_pin" varchar(255) NOT NULL,
                          "is_active" boolean NOT NULL DEFAULT true,
                          "created_at" timestamp NOT NULL DEFAULT (now()),
                          "updated_at" timestamp NOT NULL DEFAULT (now())
@@ -111,6 +112,10 @@ CREATE TABLE "login_attempts" (
                                   "success" boolean NOT NULL,
                                   "attempted_at" timestamp NOT NULL DEFAULT (now())
 );
+
+CREATE INDEX "idx_accounts_user_id" ON "accounts" ("user_id");
+
+CREATE INDEX "idx_pix_keys_account_id" ON "pix_keys" ("account_id");
 
 CREATE INDEX "idx_transactions_account_origin" ON "transactions" ("account_origin_id");
 

@@ -5,6 +5,8 @@ import com.graciano.archbank.transaction.enums.TransactionStatus;
 import com.graciano.archbank.transaction.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "transactions")
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
 
     @Id
@@ -35,17 +38,16 @@ public class Transaction {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
-    private TransactionType transactionType;
+    private TransactionType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_status", nullable = false)
     @Builder.Default
-    private TransactionStatus transactionStatus = TransactionStatus.valueOf("COMPLETED");
+    private TransactionStatus status = TransactionStatus.valueOf("COMPLETED");
 
     private String description;
 
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
 }

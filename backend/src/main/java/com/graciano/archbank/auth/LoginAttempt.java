@@ -2,6 +2,8 @@ package com.graciano.archbank.auth;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "login_attempts")
+@EntityListeners(AuditingEntityListener.class)
 public class LoginAttempt {
 
     @Id
@@ -26,7 +29,8 @@ public class LoginAttempt {
 
     private Boolean success;
 
-    @Column(name = "attempted_at")
+    @CreatedDate
+    @Column(name = "attempted_at", nullable = false, updatable = false)
     private LocalDateTime attemptedAt;
 
 }

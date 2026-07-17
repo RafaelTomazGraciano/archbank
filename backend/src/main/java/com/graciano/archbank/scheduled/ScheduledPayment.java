@@ -5,6 +5,8 @@ import com.graciano.archbank.scheduled.enums.PaymentRecurrence;
 import com.graciano.archbank.scheduled.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "scheduled_payments")
+@EntityListeners(AuditingEntityListener.class)
 public class ScheduledPayment {
 
     @Id
@@ -46,7 +49,8 @@ public class ScheduledPayment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    @Column(name = "last_processed_at")
+    @CreatedDate
+    @Column(name = "last_processed_at", nullable = false, updatable = false)
     private LocalDateTime lastProcessedAt;
 
     @Column(name = "created_at")
