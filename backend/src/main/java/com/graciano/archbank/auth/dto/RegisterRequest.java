@@ -18,7 +18,6 @@ public record RegisterRequest(
         @Pattern(regexp = "^\\+?[0-9]{10,20}$", message = "Invalid phone format")
         String phone,
         @NotBlank(message = "Password is required")
-        @Size(min = 8, max = 20)
         @Pattern(
                 regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\",./<>?]).{8,20}$",
                 message = "The password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long"
@@ -26,8 +25,7 @@ public record RegisterRequest(
                 @Schema(example = "MyP@ssw0rd123")
         String password,
         @NotBlank(message = "Transaction PIN is required")
-        @Size(min = 4, max = 6)
-        @Pattern(regexp = "\\d{4,6}", message = "PIN must contain only digits, between 4 and 6 characters")
+        @Pattern(regexp = "\\d{4,6}", message = "PIN must contain only digits, between 4 and 6 numbers")
         String transactionPin
 ) {
 }
