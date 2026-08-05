@@ -2,7 +2,7 @@ package com.graciano.archbank.auth;
 
 import com.graciano.archbank.account.AccountService;
 import com.graciano.archbank.auth.dto.LoginRequest;
-import com.graciano.archbank.auth.dto.RegisterRequest;
+import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.auth.dto.TokenResponse;
 import com.graciano.archbank.exception.BadRequestException;
 import com.graciano.archbank.exception.NotFoundException;
@@ -67,7 +67,7 @@ public class AuthServiceTest {
     @Test
     @DisplayName("Should register user, create account and return token in correct order")
     void shouldRegisterUserAndCreateAccountSuccessfully(){
-        RegisterRequest request = buildRegisterRequest();
+        SignUpRequest request = buildRegisterRequest();
         User user = buildUser();
         UserDetails userDetails = new CustomUserDetails(user);
         String expectedToken = "fake-token-123";
@@ -76,7 +76,7 @@ public class AuthServiceTest {
         when(userDetailsService.loadUserByUsername(user.getEmail())).thenReturn(userDetails);
         when(jwtTokenService.generateToken(userDetails)).thenReturn(expectedToken);
 
-        TokenResponse response = authService.register(request);
+        TokenResponse response = authService.signUp(request);
 
         assertEquals(expectedToken, response.token());
         assertEquals(user.getName(), response.name());
@@ -149,8 +149,8 @@ public class AuthServiceTest {
         verify(jwtTokenService, never()).generateToken(any());
     }
 
-    private RegisterRequest buildRegisterRequest() {
-        return new RegisterRequest(
+    private SignUpRequest buildRegisterRequest() {
+        return new SignUpRequest(
                 "Test",
                 "12345678900",
                 "test@email.com",

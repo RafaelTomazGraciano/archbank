@@ -1,7 +1,7 @@
 package com.graciano.archbank.auth;
 
 import com.graciano.archbank.auth.dto.LoginRequest;
-import com.graciano.archbank.auth.dto.RegisterRequest;
+import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.auth.dto.TokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,14 +25,14 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
-    @Operation(summary = "Register a new user", description = "Creates a new user, an associated bank account, and returns an authentication token")
+    @PostMapping("/signup")
+    @Operation(summary = "Sign up a new user", description = "Creates a new user, an associated bank account, and returns an authentication token")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "User created successfully"),
             @ApiResponse(responseCode = "400", description = "Email, CPF or phone already in use, or invalid data")
     })
-    public ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request){
-        TokenResponse response = authService.register(request);
+    public ResponseEntity<TokenResponse> signUp(@Valid @RequestBody SignUpRequest request){
+        TokenResponse response = authService.signUp(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

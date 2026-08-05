@@ -16,7 +16,7 @@ import {
   FieldLabel,
 } from "@/shared/components/ui/field"
 import { Input } from "@/shared/components/ui/input"
-import { register } from "../api/auth-api"
+import { signUp } from "../api/auth-api"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
@@ -46,7 +46,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     setLoading(true)
     try{
       const normalizedPhone = phone.trim() === "" ? null : phone.replace(/[^\d+]/g, "")
-      const result = await register({
+      const result = await signUp({
         name,
         cpf,
         email,

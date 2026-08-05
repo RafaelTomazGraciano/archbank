@@ -1,6 +1,6 @@
 package com.graciano.archbank.user;
 
-import com.graciano.archbank.auth.dto.RegisterRequest;
+import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should create user successfully when email and CPF are unique")
     void createUserSuccessfully(){
-        RegisterRequest request = buildRegisterRequest();
+        SignUpRequest request = buildRegisterRequest();
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
         when(userRepository.existsByPhone(request.phone())).thenReturn(false);
@@ -63,7 +63,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should throw BadRequestException when email is already in use")
     void shouldThrowBadRequestExceptionWhenEmailAlreadyExist(){
-        RegisterRequest request = buildRegisterRequest();
+        SignUpRequest request = buildRegisterRequest();
         when(userRepository.existsByEmail(request.email())).thenReturn(true);
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.createUser(request));
@@ -78,7 +78,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should throw BadRequestException when CPF is already in use")
     void shouldThrowBadRequestExceptionWhenCpfAlreadyExist(){
-        RegisterRequest request = buildRegisterRequest();
+        SignUpRequest request = buildRegisterRequest();
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(userRepository.existsByCpf(request.cpf())).thenReturn(true);
 
@@ -93,7 +93,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should throw BadRequestException when phone is already in use")
     void shouldThrowBadRequestExceptionWhenPhoneAlreadyExist() {
-        RegisterRequest request = buildRegisterRequest();
+        SignUpRequest request = buildRegisterRequest();
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
         when(userRepository.existsByPhone(request.phone())).thenReturn(true);
@@ -111,7 +111,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should create user successfully without checking phone uniqueness when phone is null")
     void shouldCreateUserSuccessfullyWhenPhoneIsNull() {
-        RegisterRequest request = buildRegisterRequestWithoutPhone();
+        SignUpRequest request = buildRegisterRequestWithoutPhone();
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
         when(userRepository.existsByCpf(request.cpf())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encrypted-password");
@@ -125,8 +125,8 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(any(User.class));
     }
 
-    private RegisterRequest buildRegisterRequest() {
-        return new RegisterRequest(
+    private SignUpRequest buildRegisterRequest() {
+        return new SignUpRequest(
                 "Test",
                 "12345678910",
                 "test@email.com",
@@ -135,8 +135,8 @@ public class UserServiceTest {
                 "1234");
     }
 
-    private RegisterRequest buildRegisterRequestWithoutPhone() {
-        return new RegisterRequest(
+    private SignUpRequest buildRegisterRequestWithoutPhone() {
+        return new SignUpRequest(
                 "Test",
                 "12345678910",
                 "test@email.com",

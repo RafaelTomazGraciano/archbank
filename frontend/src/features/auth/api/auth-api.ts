@@ -5,7 +5,7 @@ export interface LoginRequest {
     password: string;
 }
 
-export interface RegisterRequest {
+export interface SignUpRequest {
     name: string;
     cpf: string;
     email: string;
@@ -26,7 +26,7 @@ export async function login(data: LoginRequest): Promise<TokenResponse> {
     return response.data;
 }
 
-export async function register(data: RegisterRequest): Promise<TokenResponse> {
-    const response = await api.post<TokenResponse>("auth/register", data);
+export async function signUp(data: SignUpRequest): Promise<TokenResponse> {
+    const response = await api.post<TokenResponse>("auth/signup", data);
     return response.data;
 }

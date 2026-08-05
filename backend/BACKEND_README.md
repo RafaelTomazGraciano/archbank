@@ -25,7 +25,7 @@ For protected endpoints, click **Authorize** at the top of the page and provide 
 Bearer Token: TOKEN
 ```
 
-### POST `/api/auth/register` - Register a user his account
+### POST `/api/auth/signup` - Register a user his account
 
 Header is not needed
 

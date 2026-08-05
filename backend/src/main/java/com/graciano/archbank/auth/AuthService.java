@@ -2,7 +2,7 @@ package com.graciano.archbank.auth;
 
 import com.graciano.archbank.account.AccountService;
 import com.graciano.archbank.auth.dto.LoginRequest;
-import com.graciano.archbank.auth.dto.RegisterRequest;
+import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.auth.dto.TokenResponse;
 import com.graciano.archbank.exception.BadRequestException;
 import com.graciano.archbank.exception.NotFoundException;
@@ -34,7 +34,7 @@ public class AuthService {
     private final LoginAttemptService loginAttemptService;
 
     @Transactional
-    public TokenResponse register(RegisterRequest request){
+    public TokenResponse signUp(SignUpRequest request){
         User user = userService.createUser(request);
         accountService.createAccount(user);
 

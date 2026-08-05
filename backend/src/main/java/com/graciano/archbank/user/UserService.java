@@ -1,6 +1,6 @@
 package com.graciano.archbank.user;
 
-import com.graciano.archbank.auth.dto.RegisterRequest;
+import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +15,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(RegisterRequest request) {
+    public User createUser(SignUpRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new BadRequestException("Email already in use");
         }
