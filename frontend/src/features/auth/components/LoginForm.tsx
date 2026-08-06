@@ -48,15 +48,20 @@ export function LoginForm({
       localStorage.setItem("token", loginResponse.token)
       navigate("/dashboard")
     }catch(err: any){
-      const data = err.response?.data
       let messages: string[] = ["Invalid email or password"]
 
-      if (typeof data === "string") {
-        messages = [data]
-      } else if (data?.errors) {
-        messages = Object.values(data.errors) as string[]
-      } else if (data?.message) {
-        messages = [data.message]
+      if(!err.response){
+        messages = ["Server is unreachable. Please try again later"]
+      }
+      else{
+        const data = err.response.data
+        if (typeof data === "string") {
+          messages = [data]
+        } else if (data?.errors) {
+          messages = Object.values(data.errors) as string[]
+        } else if (data?.message) {
+          messages = [data.message]
+        }
       }
 
       setErrors(messages)
