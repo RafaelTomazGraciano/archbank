@@ -15,6 +15,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/shared/components/ui/field"
+import { signupSchema } from "../schemas/auth-schemas"
 import { Input } from "@/shared/components/ui/input"
 import { signUp } from "../api/auth-api"
 
@@ -34,27 +35,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [showPin, setShowPin] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
-  async function handleSubmit(e: React.FormEvent){
+  async function handleSubmit(e: React.SubmitEvent){
     e.preventDefault()
     setErrors([])
 
-    if(password !== confirmPassword){
-      setErrors(["Passwords do not match"])
+    const zodResult = signupSchema.safeParse({name, cpf, email, phone, password, confirmPassword, transactionPin})
+    if(!zodResult.success){
+      setErrors(zodResult.error.issues.map((issue) => issue.message))
       return
     }
 
     setLoading(true)
     try{
-      const normalizedPhone = phone.trim() === "" ? null : phone.replace(/[^\d+]/g, "")
-      const result = await signUp({
-        name,
-        cpf,
-        email,
+      const normalizedPhone = zodResult.data.phone?.trim() === "" ? null : zodResult.data.phone!.replace(/[^\d+]/g, "")
+      const signupResponse = await signUp({
+        name: zodResult.data.name,
+        cpf: zodResult.data.cpf,
+        email: zodResult.data.email,
         phone: normalizedPhone,
-        password,
-        transactionPin,
+        password: zodResult.data.password,
+        transactionPin: zodResult.data.transactionPin,
       })
-      localStorage.setItem("token", result.token)
+      localStorage.setItem("token", signupResponse.token)
       navigate("/dashboard")
     }catch(err: any){
       const data = err.response?.data

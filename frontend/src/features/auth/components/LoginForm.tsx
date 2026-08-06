@@ -16,6 +16,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/shared/components/ui/field"
+import { loginSchema } from "../schemas/auth-schemas"
 import { Input } from "@/shared/components/ui/input"
 import { login } from "../api/auth-api"
 
@@ -31,14 +32,20 @@ export function LoginForm({
   const [errors, setErrors] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent){
+  async function handleSubmit(e: React.SubmitEvent){
     e.preventDefault()
     setErrors([])
-    setLoading(true)
 
+    const zodResult = loginSchema.safeParse({ email, password})
+    if(!zodResult.success) {
+      setErrors(zodResult.error.issues.map((issue) => issue.message))
+      return
+    }
+
+    setLoading(true)
     try{
-      const result = await login({ email, password })
-      localStorage.setItem("token", result.token)
+      const loginResponse = await login(zodResult.data)
+      localStorage.setItem("token", loginResponse.token)
       navigate("/dashboard")
     }catch(err: any){
       const data = err.response?.data
