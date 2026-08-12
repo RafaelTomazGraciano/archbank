@@ -39,7 +39,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     e.preventDefault()
     setErrors([])
 
-    const zodResult = signupSchema.safeParse({name, cpf, email, phone, password, confirmPassword, transactionPin})
+    const normalizedPhone = phone.trim() === "" ? "" : phone.replace(/[^\d+]/g, "")
+
+    const zodResult = signupSchema.safeParse({name, cpf, email, phone: normalizedPhone, password, confirmPassword, transactionPin})
     if(!zodResult.success){
       setErrors(zodResult.error.issues.map((issue) => issue.message))
       return
@@ -47,12 +49,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     setLoading(true)
     try{
-      const normalizedPhone = zodResult.data.phone?.trim() === "" ? null : zodResult.data.phone!.replace(/[^\d+]/g, "")
       const signupResponse = await signUp({
         name: zodResult.data.name,
         cpf: zodResult.data.cpf,
         email: zodResult.data.email,
-        phone: normalizedPhone,
+        phone: zodResult.data.phone === "" ? null : zodResult.data.phone!,
         password: zodResult.data.password,
         transactionPin: zodResult.data.transactionPin,
       })
@@ -90,7 +91,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -151,6 +152,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
+                  aria-label="Toggle password visibility" 
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -177,6 +179,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
+                  aria-label="Toggle confirm password visibility"
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -201,6 +204,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   onClick={() => setShowPin((prev) => !prev)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
+                  aria-label="Toggle PIN visibility"
                 >
                   {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
