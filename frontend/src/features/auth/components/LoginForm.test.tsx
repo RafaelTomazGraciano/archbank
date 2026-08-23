@@ -56,9 +56,7 @@ describe("LoginForm", () => {
 
   it("stores the token and navigates to the dashboard on successful login", async () => {
     vi.mocked(login).mockResolvedValue({
-      token: "fake-token",
-      name: "Test",
-      email: "user@email.com",
+      token: "fake-token"
     })
 
     await fillForm("user@email.com", "Password@123")
@@ -144,7 +142,7 @@ describe("LoginForm", () => {
 
     expect(screen.getByRole("button", { name: /logging in/i })).toBeDisabled()
 
-    resolveLogin({ token: "t", name: "Test", email: "user@email.com" })
+    resolveLogin({ token: "t" })
   })
 
 })

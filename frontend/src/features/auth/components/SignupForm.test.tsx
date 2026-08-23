@@ -92,9 +92,7 @@ describe("SignupForm", () => {
 
   it("strips formatting from the phone number before sending it to the API", async () => {
     vi.mocked(signUp).mockResolvedValue({
-      token: "fake-token",
-      name: "Test",
-      email: "user@email.com",
+      token: "fake-token"
     })
 
     await fillValidForm()
@@ -108,9 +106,7 @@ describe("SignupForm", () => {
 
   it("sends null as the phone when the field is left empty", async () => {
     vi.mocked(signUp).mockResolvedValue({
-      token: "fake-token",
-      name: "Test",
-      email: "user@email.com",
+      token: "fake-token"
     })
 
     await fillValidForm()
@@ -123,9 +119,7 @@ describe("SignupForm", () => {
 
   it("stores the token and navigates to the dashboard on successful signup", async () => {
     vi.mocked(signUp).mockResolvedValue({
-      token: "fake-token",
-      name: "Test",
-      email: "user@email.com",
+      token: "fake-token"
     })
 
     await fillValidForm()
@@ -195,6 +189,6 @@ describe("SignupForm", () => {
 
     expect(screen.getByRole("button", { name: /creating account/i })).toBeDisabled()
 
-    resolveSignUp({ token: "t", name: "Test", email: "user@email.com" })
+    resolveSignUp({ token: "t" })
   })
 })

@@ -39,7 +39,7 @@ public class AuthService {
         accountService.createAccount(user);
 
         String token = jwtTokenService.generateToken(userDetailsService.loadUserByUsername(user.getEmail()));
-        return new TokenResponse(token, user.getName(), user.getEmail());
+        return new TokenResponse(token);
     }
 
     public TokenResponse login(LoginRequest request, HttpServletRequest httpRequest){
@@ -50,11 +50,9 @@ public class AuthService {
             loginAttemptService.register(request.email(), httpRequest.getRemoteAddr(), true);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(request.email());
-            User user = userRepository.findByEmail(request.email())
-                    .orElseThrow(() -> new NotFoundException("User not found"));
 
             String token = jwtTokenService.generateToken(userDetails);
-            return new TokenResponse(token, user.getName(), user.getEmail());
+            return new TokenResponse(token);
         }catch (BadCredentialsException ex){
             loginAttemptService.register(request.email(), httpRequest.getRemoteAddr(), false);
             throw new BadRequestException("Invalid email or password");

@@ -16,8 +16,6 @@ export interface SignUpRequest {
 
 export interface TokenResponse {
     token: string;
-    name: string;
-    email: string;
 }
 
 export async function login(data: LoginRequest): Promise<TokenResponse> {

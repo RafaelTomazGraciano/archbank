@@ -79,8 +79,6 @@ public class AuthServiceTest {
         TokenResponse response = authService.signUp(request);
 
         assertEquals(expectedToken, response.token());
-        assertEquals(user.getName(), response.name());
-        assertEquals(user.getEmail(), response.email());
 
         InOrder inOrder = inOrder(userService, accountService, userDetailsService, jwtTokenService);
         inOrder.verify(userService).createUser(request);
@@ -100,14 +98,11 @@ public class AuthServiceTest {
 
         when(httpRequest.getRemoteAddr()).thenReturn(ip);
         when(userDetailsService.loadUserByUsername(request.email())).thenReturn(userDetails);
-        when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
         when(jwtTokenService.generateToken(userDetails)).thenReturn(expectedToken);
 
         TokenResponse response = authService.login(request, httpRequest);
 
         assertEquals(expectedToken, response.token());
-        assertEquals(user.getName(), response.name());
-        assertEquals(user.getEmail(), response.email());
 
         ArgumentCaptor<UsernamePasswordAuthenticationToken> authCaptor =
                 ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
@@ -131,21 +126,6 @@ public class AuthServiceTest {
 
         assertEquals("Invalid email or password", exception.getMessage());
         verify(loginAttemptService).register(request.email(), ip, false);
-        verify(jwtTokenService, never()).generateToken(any());
-    }
-
-    @Test
-    @DisplayName("Should throw NotFoundException when authenticated user is missing from repository")
-    void shouldThrowNotFoundExceptionWhenUserNotFoundAfterAuthentication() {
-        LoginRequest request = buildLoginRequest();
-        String ip = "127.0.0.1";
-
-        when(httpRequest.getRemoteAddr()).thenReturn(ip);
-        when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> authService.login(request, httpRequest));
-
-        verify(loginAttemptService).register(request.email(), ip, true);
         verify(jwtTokenService, never()).generateToken(any());
     }
 
