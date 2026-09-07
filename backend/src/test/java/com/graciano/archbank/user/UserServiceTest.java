@@ -2,6 +2,9 @@ package com.graciano.archbank.user;
 
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
+import com.graciano.archbank.security.CustomUserDetails;
+import com.graciano.archbank.user.dto.UserResponse;
+import org.springframework.security.core.Authentication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +26,12 @@ public class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private CustomUserDetails customUserDetails;
 
     @InjectMocks
     private UserService userService;
@@ -123,6 +132,40 @@ public class UserServiceTest {
         assertNull(user.getPhone());
         verify(userRepository, never()).existsByPhone(any());
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should return the user profile data succesfully")
+    void shouldReturnUserProfileSuccessfully(){
+        User user = User.builder()
+                .name("Test")
+                .cpf("12345678910")
+                .email("test@email.com")
+                .phone("+53999999999")
+                .build();
+
+        when(authentication.getPrincipal()).thenReturn(customUserDetails);
+        when(customUserDetails.getUser()).thenReturn(user);
+
+        UserResponse response = userService.getProfile(authentication);
+
+        assertEquals(user.getName(), response.name());
+        assertEquals(user.getCpf(), response.cpf());
+        assertEquals(user.getEmail(), response.email());
+        assertEquals(user.getPhone(), response.phone());
+        verify(authentication).getPrincipal();
+        verify(customUserDetails).getUser();
+    }
+
+    @Test
+    @DisplayName("Should throw ClassCastException when principal is not a CustomUserDetails instance")
+    void shouldThrowClassCastExceptionWhenPrincipalIsNotCustomUserDetails(){
+        when(authentication.getPrincipal()).thenReturn("randomString");
+
+        ClassCastException exception = assertThrows(ClassCastException.class,
+                () -> userService.getProfile(authentication));
+
+        assertTrue(exception.getMessage().contains("CustomUserDetails"));
     }
 
     private SignUpRequest buildRegisterRequest() {

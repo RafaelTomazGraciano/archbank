@@ -2,7 +2,10 @@ package com.graciano.archbank.user;
 
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
+import com.graciano.archbank.security.CustomUserDetails;
+import com.graciano.archbank.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,15 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getProfile(Authentication authentication){
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        User user = customUserDetails.getUser();
+
+        return new UserResponse(user.getName(), user.getCpf(), user.getEmail(), user.getPhone());
     }
 
 }
