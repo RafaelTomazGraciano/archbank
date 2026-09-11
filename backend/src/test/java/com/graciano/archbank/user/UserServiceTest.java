@@ -2,7 +2,7 @@ package com.graciano.archbank.user;
 
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
-import com.graciano.archbank.security.CustomUserDetails;
+import com.graciano.archbank.security.AuthenticatedUserProvider;
 import com.graciano.archbank.user.dto.UserResponse;
 import org.springframework.security.core.Authentication;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class UserServiceTest {
     private Authentication authentication;
 
     @Mock
-    private CustomUserDetails customUserDetails;
+    private AuthenticatedUserProvider authenticatedUserProvider;
 
     @InjectMocks
     private UserService userService;
@@ -144,8 +144,7 @@ public class UserServiceTest {
                 .phone("+53999999999")
                 .build();
 
-        when(authentication.getPrincipal()).thenReturn(customUserDetails);
-        when(customUserDetails.getUser()).thenReturn(user);
+        when(authenticatedUserProvider.getUser(authentication)).thenReturn(user);
 
         UserResponse response = userService.getProfile(authentication);
 
@@ -153,19 +152,7 @@ public class UserServiceTest {
         assertEquals(user.getCpf(), response.cpf());
         assertEquals(user.getEmail(), response.email());
         assertEquals(user.getPhone(), response.phone());
-        verify(authentication).getPrincipal();
-        verify(customUserDetails).getUser();
-    }
-
-    @Test
-    @DisplayName("Should throw ClassCastException when principal is not a CustomUserDetails instance")
-    void shouldThrowClassCastExceptionWhenPrincipalIsNotCustomUserDetails(){
-        when(authentication.getPrincipal()).thenReturn("randomString");
-
-        ClassCastException exception = assertThrows(ClassCastException.class,
-                () -> userService.getProfile(authentication));
-
-        assertTrue(exception.getMessage().contains("CustomUserDetails"));
+        verify(authenticatedUserProvider).getUser(authentication);
     }
 
     private SignUpRequest buildRegisterRequest() {

@@ -5,6 +5,8 @@ import com.graciano.archbank.transaction.enums.TransactionStatus;
 import com.graciano.archbank.transaction.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -38,11 +40,13 @@ public class Transaction {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private TransactionType type;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Builder.Default
-    private TransactionStatus status = TransactionStatus.valueOf("COMPLETED");
+    private TransactionStatus status = TransactionStatus.COMPLETED;
 
     private String description;
 

@@ -1,8 +1,7 @@
 package com.graciano.archbank.security;
 
 import com.graciano.archbank.user.User;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,14 +10,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
 public class CustomUserDetails implements UserDetails {
 
-    @NotNull
     private final User user;
 
-    public CustomUserDetails(@NotNull User user){
+    public CustomUserDetails(@NonNull User user) {
         this.user = user;
+    }
+
+    public @NonNull User getUser() {
+        return user;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.graciano.archbank.scheduled.enums.PaymentRecurrence;
 import com.graciano.archbank.scheduled.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -44,9 +46,11 @@ public class ScheduledPayment {
     private LocalDate scheduledDate;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private PaymentRecurrence recurrence;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private PaymentStatus status;
 
     @CreatedDate

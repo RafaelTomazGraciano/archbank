@@ -5,12 +5,10 @@ import com.graciano.archbank.auth.dto.LoginRequest;
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.auth.dto.TokenResponse;
 import com.graciano.archbank.exception.BadRequestException;
-import com.graciano.archbank.exception.NotFoundException;
 import com.graciano.archbank.security.CustomUserDetails;
 import com.graciano.archbank.security.CustomUserDetailsService;
 import com.graciano.archbank.security.JwtTokenService;
 import com.graciano.archbank.user.User;
-import com.graciano.archbank.user.UserRepository;
 import com.graciano.archbank.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +24,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,9 +36,6 @@ public class AuthServiceTest {
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private AccountService accountService;

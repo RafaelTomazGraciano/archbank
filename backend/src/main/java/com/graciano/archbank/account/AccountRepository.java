@@ -1,13 +1,19 @@
 package com.graciano.archbank.account;
 
+import com.graciano.archbank.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
     @Query(value = "SELECT nextval('account_number_seq')", nativeQuery = true)
     Long getNextSequenceValue();
+
+    Account findByUser(User user);
+
+    Optional<Account> findByAccountNumberAndBranch(String accountNumber, String branch);
 }

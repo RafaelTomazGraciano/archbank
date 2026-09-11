@@ -27,6 +27,20 @@ public class RestExceptionHandler {
                 .body(Map.of("message", exception.getMessage()));
     }
 
+    @ExceptionHandler(InsufficientBalanceException.class)
+    private ResponseEntity<Map<String, String>> handleInsufficientBalanceException(InsufficientBalanceException exception){
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
+    @ExceptionHandler(SelfTransferException.class)
+    private ResponseEntity<Map<String, String>> handleSelfTransferException(SelfTransferException exception){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     private ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException exception){
         Map<String, String> errors = new LinkedHashMap<>();

@@ -4,6 +4,8 @@ import com.graciano.archbank.notification.enums.NotificationType;
 import com.graciano.archbank.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -32,6 +34,7 @@ public class Notification {
     private String message;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private NotificationType type;
 
     @Builder.Default

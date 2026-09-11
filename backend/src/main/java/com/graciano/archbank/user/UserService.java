@@ -2,6 +2,7 @@ package com.graciano.archbank.user;
 
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.exception.BadRequestException;
+import com.graciano.archbank.security.AuthenticatedUserProvider;
 import com.graciano.archbank.security.CustomUserDetails;
 import com.graciano.archbank.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Transactional
     public User createUser(SignUpRequest request) {
@@ -44,10 +46,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponse getProfile(Authentication authentication){
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        User user = customUserDetails.getUser();
-
+        User user = authenticatedUserProvider.getUser(authentication);
         return new UserResponse(user.getName(), user.getCpf(), user.getEmail(), user.getPhone());
     }
 
