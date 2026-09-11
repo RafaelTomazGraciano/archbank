@@ -72,3 +72,11 @@ Tests are written with [Vitest](https://vitest.dev/) and [React Testing Library]
 ```bash
 npm run test
 ```
+
+## Other READMEs
+
+This README covers only the **frontend**. Continue reading the project's documentation.
+
+Read the frontend documentation: [BACKEND_README](./../backend/BACKEND_README.md)
+
+Read the project documentation: [README](./../README.md)
