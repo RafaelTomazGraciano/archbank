@@ -66,7 +66,7 @@ CREATE TABLE "pix_keys" (
                             "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
                             "account_id" uuid NOT NULL,
                             "key_type" pix_key_type NOT NULL,
-                            "key_value" varchar(255) UNIQUE NOT NULL,
+                            "key_value" varchar(255) NOT NULL,
                             "is_active" boolean NOT NULL DEFAULT true,
                             "created_at" timestamp NOT NULL DEFAULT (now())
 );
@@ -117,6 +117,8 @@ CREATE INDEX "idx_accounts_user_id" ON "accounts" ("user_id");
 
 CREATE INDEX "idx_pix_keys_account_id" ON "pix_keys" ("account_id");
 
+CREATE INDEX "idx_pix_keys_key_value" ON "pix_keys" ("key_value");
+
 CREATE INDEX "idx_transactions_account_origin" ON "transactions" ("account_origin_id");
 
 CREATE INDEX "idx_transactions_account_destination" ON "transactions" ("account_destination_id");
@@ -130,6 +132,17 @@ CREATE INDEX "idx_scheduled_payments_scheduled_date" ON "scheduled_payments" ("s
 CREATE INDEX "idx_notifications_user_id" ON "notifications" ("user_id");
 
 CREATE INDEX "idx_notifications_is_read" ON "notifications" ("is_read");
+
+COMMENT ON TABLE "pix_keys" IS 'key_value is unique only among active keys (is_active = true).
+Constraint enforced via migration SQL:
+CREATE UNIQUE INDEX idx_pix_keys_value_active
+ON pix_keys (key_value) WHERE is_active = true;
+';
+
+
+CREATE UNIQUE INDEX "idx_pix_keys_value_active"
+    ON "pix_keys" ("key_value")
+    WHERE "is_active" = true;
 
 ALTER TABLE "accounts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 

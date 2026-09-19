@@ -4,8 +4,8 @@ import com.graciano.archbank.account.Account;
 import com.graciano.archbank.account.AccountRepository;
 import com.graciano.archbank.exception.NotFoundException;
 import com.graciano.archbank.exception.SelfTransferException;
-import com.graciano.archbank.pix.PixKeys;
-import com.graciano.archbank.pix.PixKeysRepository;
+import com.graciano.archbank.pix.PixKey;
+import com.graciano.archbank.pix.PixKeyRepository;
 import com.graciano.archbank.security.AuthenticatedUserProvider;
 import com.graciano.archbank.transaction.dto.*;
 import com.graciano.archbank.transaction.enums.TransactionStatus;
@@ -36,7 +36,7 @@ class TransactionServiceTest {
     private AccountRepository accountRepository;
 
     @Mock
-    private PixKeysRepository pixKeysRepository;
+    private PixKeyRepository pixKeyRepository;
 
     @Mock
     private Authentication authentication;
@@ -57,14 +57,14 @@ class TransactionServiceTest {
         Account originAccount = buildAccount(user, new BigDecimal("200.00"));
         User recipientUser = buildRecipientUser();
         Account destinationAccount = buildAccount(recipientUser, new BigDecimal("100.00"));
-        PixKeys pixKeys = buildPixKeys(destinationAccount);
+        PixKey pixKeys = buildPixKeys(destinationAccount);
         BigDecimal amountToSend = new BigDecimal("50.00");
         PixRequest pixRequest = new PixRequest(PixKeyType.CPF, "123456789", amountToSend, "Test Payment");
         TransactionResponse expectedResponse = buildTransactionResponse(TransactionType.PIX, amountToSend);
 
         when(authenticatedUserProvider.getUser(authentication)).thenReturn(user);
         when(accountRepository.findByUser(user)).thenReturn(originAccount);
-        when(pixKeysRepository.findByKeyTypeAndKeyValueAndIsActiveTrue(pixRequest.type(), pixRequest.recipientKey()))
+        when(pixKeyRepository.findByKeyTypeAndKeyValue(pixRequest.keyType(), pixRequest.recipientKey()))
                 .thenReturn(Optional.of(pixKeys));
         when(transactionCoreService.executeTransaction(originAccount, destinationAccount, amountToSend, TransactionType.PIX,
                 pixRequest.description())).thenReturn(expectedResponse);
@@ -85,7 +85,7 @@ class TransactionServiceTest {
 
         when(authenticatedUserProvider.getUser(authentication)).thenReturn(user);
         when(accountRepository.findByUser(user)).thenReturn(originAccount);
-        when(pixKeysRepository.findByKeyTypeAndKeyValueAndIsActiveTrue(pixRequest.type(), pixRequest.recipientKey()))
+        when(pixKeyRepository.findByKeyTypeAndKeyValue(pixRequest.keyType(), pixRequest.recipientKey()))
                 .thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> transactionService.processPix(pixRequest, authentication));
@@ -97,12 +97,12 @@ class TransactionServiceTest {
     void shouldThrowSelfTransferExceptionWhenPixToOwnAccount() {
         User user = buildUser();
         Account originAccount = buildAccount(user, new BigDecimal("200.00"));
-        PixKeys pixKeys = buildPixKeys(originAccount);
+        PixKey pixKeys = buildPixKeys(originAccount);
         PixRequest request = new PixRequest(PixKeyType.CPF, "12345678910", new BigDecimal("50.00"), "Test Payment");
 
         when(authenticatedUserProvider.getUser(authentication)).thenReturn(user);
         when(accountRepository.findByUser(user)).thenReturn(originAccount);
-        when(pixKeysRepository.findByKeyTypeAndKeyValueAndIsActiveTrue(request.type(), request.recipientKey()))
+        when(pixKeyRepository.findByKeyTypeAndKeyValue(request.keyType(), request.recipientKey()))
                 .thenReturn(Optional.of(pixKeys));
 
         assertThrows(SelfTransferException.class, () -> transactionService.processPix(request, authentication));
@@ -249,8 +249,8 @@ class TransactionServiceTest {
                 .build();
     }
 
-    private PixKeys buildPixKeys(Account account){
-        return PixKeys.builder()
+    private PixKey buildPixKeys(Account account){
+        return PixKey.builder()
                 .account(account)
                 .keyType(PixKeyType.CPF)
                 .keyValue("12345678910")

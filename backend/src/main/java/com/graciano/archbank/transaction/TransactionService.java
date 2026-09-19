@@ -4,8 +4,8 @@ import com.graciano.archbank.account.Account;
 import com.graciano.archbank.account.AccountRepository;
 import com.graciano.archbank.exception.NotFoundException;
 import com.graciano.archbank.exception.SelfTransferException;
-import com.graciano.archbank.pix.PixKeys;
-import com.graciano.archbank.pix.PixKeysRepository;
+import com.graciano.archbank.pix.PixKey;
+import com.graciano.archbank.pix.PixKeyRepository;
 import com.graciano.archbank.security.AuthenticatedUserProvider;
 import com.graciano.archbank.transaction.dto.*;
 import com.graciano.archbank.transaction.enums.TransactionType;
@@ -20,15 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class TransactionService {
 
     private final AccountRepository accountRepository;
-    private final PixKeysRepository pixKeysRepository;
+    private final PixKeyRepository pixKeyRepository;
     private final AuthenticatedUserProvider authenticatedUserProvider;
     private final TransactionCoreService transactionCoreService;
 
     @Transactional
     public TransactionResponse processPix(PixRequest request, Authentication authentication){
-        Account originAccount = extractAccount(authentication);
+        Account originAccount = authenticatedUserProvider.extractAccount(authentication);
 
-        PixKeys pixKeys = pixKeysRepository.findByKeyTypeAndKeyValueAndIsActiveTrue(request.type(), request.recipientKey())
+        PixKey pixKeys = pixKeyRepository.findByKeyTypeAndKeyValue(request.keyType(), request.recipientKey())
                 .orElseThrow(() -> new NotFoundException("PIX key not found"));
 
         Account destinationAccount = pixKeys.getAccount();
@@ -39,7 +39,7 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponse processTransfer(TransferRequest request, Authentication authentication){
-        Account originAccount = extractAccount(authentication);
+        Account originAccount = authenticatedUserProvider.extractAccount(authentication);
         Account destinationAccount = findAccountByNumberAndBranch(request.accountNumber(), request.branch());
         validateNotSelfTransfer(originAccount, destinationAccount);
 
@@ -55,7 +55,7 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponse processWithdrawal(WithdrawalRequest request, Authentication authentication) {
-        Account originAccount = extractAccount(authentication);
+        Account originAccount = authenticatedUserProvider.extractAccount(authentication);
 
         return transactionCoreService.executeTransaction(originAccount, null, request.amount(), TransactionType.WITHDRAWAL, request.description());
     }
@@ -64,11 +64,6 @@ public class TransactionService {
         if (origin.getId().equals(destination.getId())) {
             throw new SelfTransferException("Cannot transfer to your own account");
         }
-    }
-
-    private Account extractAccount(Authentication authentication){
-        User user = authenticatedUserProvider.getUser(authentication);
-        return accountRepository.findByUser(user);
     }
 
     private Account findAccountByNumberAndBranch(String accountNumber, String branch) {

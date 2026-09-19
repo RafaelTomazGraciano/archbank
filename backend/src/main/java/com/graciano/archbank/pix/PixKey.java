@@ -24,7 +24,7 @@ import java.util.UUID;
 @SQLDelete(sql="UPDATE pix_keys SET is_active = false WHERE id = ?")
 @SQLRestriction("is_active = true")
 @EntityListeners(AuditingEntityListener.class)
-public class PixKeys {
+public class PixKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,10 +36,10 @@ public class PixKeys {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "key_type")
+    @Column(name = "key_type", nullable = false)
     private PixKeyType keyType;
 
-    @Column(name = "key_value")
+    @Column(name = "key_value", nullable = false)
     private String keyValue;
 
     @Builder.Default

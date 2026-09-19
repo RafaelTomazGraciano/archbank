@@ -22,6 +22,11 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    @Transactional(readOnly = true)
+    public Account getAccountByUser(User user){
+        return accountRepository.findByUser(user);
+    }
+
     private String generateAccountNumber() {
         Long nextId = accountRepository.getNextSequenceValue();
         long obfuscated = nextId ^ XOR_MASK;

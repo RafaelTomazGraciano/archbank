@@ -128,7 +128,7 @@ The command below spins up a local Postgres instance matching the **default** va
 your DB credentials in `.env`, update this command (or your own Postgres setup) to match:
 
 ```bash
-docker run --name archbank-db -e POSTGRES_DB=archbank -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16
+docker run --name archbank-db -e POSTGRES_DB=archbank -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:18.6
 ```
 
 You're not required to use this exact command, any Postgres instance works, as long as its credentials match what's in your `.env`.

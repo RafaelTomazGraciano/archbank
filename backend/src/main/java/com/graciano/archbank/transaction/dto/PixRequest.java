@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public record PixRequest(
         @NotNull(message = "Type of pix key is required")
-        PixKeyType type,
+        PixKeyType keyType,
         @NotBlank(message = "The recipient key is required")
         String recipientKey,
         @NotNull(message = "Amount is required")

@@ -5,7 +5,6 @@ import com.graciano.archbank.auth.dto.LoginRequest;
 import com.graciano.archbank.auth.dto.SignUpRequest;
 import com.graciano.archbank.auth.dto.TokenResponse;
 import com.graciano.archbank.exception.BadRequestException;
-import com.graciano.archbank.exception.NotFoundException;
 import com.graciano.archbank.security.CustomUserDetailsService;
 import com.graciano.archbank.security.JwtTokenService;
 import com.graciano.archbank.user.User;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
